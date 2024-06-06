@@ -1,3 +1,4 @@
+# Configurar e executar o script
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -5,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import logging
 
-
+# Configurar o logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def votar_varias_vezes(votos):
@@ -15,18 +16,26 @@ def votar_varias_vezes(votos):
     ciente_button_id = "aceitoLGPD"
     feedback_xpath = "//span[@class='pds-answer-text' and contains(text(), 'Lorena Fortes - Lavabos Sensoriais')]/following-sibling::span/span[@class='pds-feedback-per']"
 
-    # Configurar o WebDriver para rodar em modo headless (aqui usamos o Chrome)
+    # Configurar o WebDriver (remover o modo headless)
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--window-size=1920x1080')
 
     driver = webdriver.Chrome(options=options)  # ou o caminho completo para o ChromeDriver se não estiver no PATH
     
     for count in range(1, votos + 1):
         try:
             logging.info(f"Voto número: {count}")
+            driver.get(url)
+            wait = WebDriverWait(driver, 10)
+
+            # Apagar todos os cookies
+            driver.delete_all_cookies()
+            logging.info("Cookies apagados")
+
+            # Recarregar a página após apagar os cookies
             driver.get(url)
             wait = WebDriverWait(driver, 10)
 
@@ -55,11 +64,8 @@ def votar_varias_vezes(votos):
             feedback = driver.find_element(By.XPATH, feedback_xpath).text.strip()
             logging.info(f"Porcentagem de votos para Lorena Fortes: {feedback}")
             
-            # Limpar cookies
-            driver.delete_all_cookies()
-
             # Esperar 5 segundos antes da próxima votação
-            time.sleep(2)
+            time.sleep(5)
             
         except Exception as e:
             logging.error(f"Erro durante a votação: {e}")
@@ -67,6 +73,6 @@ def votar_varias_vezes(votos):
     driver.quit()
 
 # Definir o número de votos desejado
-numero_de_votos = 1000  # Altere este número conforme necessário
+numero_de_votos = 100  # Altere este número conforme necessário
 
 votar_varias_vezes(numero_de_votos)
