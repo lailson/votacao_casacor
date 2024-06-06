@@ -73,6 +73,6 @@ def votar_varias_vezes(votos):
     driver.quit()
 
 # Definir o número de votos desejado
-numero_de_votos = 100  # Altere este número conforme necessário
+numero_de_votos = 10000  # Altere este número conforme necessário
 
 votar_varias_vezes(numero_de_votos)
